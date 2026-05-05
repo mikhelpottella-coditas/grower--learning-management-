@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: grower
+  datasource:
+    url: jdbc:mysql://localhost:3306/grower
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+  liquibase:
+    change-log: db/changelog/db.changelog-master.xml
