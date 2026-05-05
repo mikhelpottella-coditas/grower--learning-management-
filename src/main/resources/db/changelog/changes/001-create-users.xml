@@ -10,4 +10,10 @@
                  relativeToChangelogFile="false"/>
     </changeSet>
 
+    <changeSet id="002-rename-name-to-username" author="Michael">
+        <sql>
+            ALTER TABLE users
+            CHANGE name username VARCHAR(255) NOT NULL;
+        </sql>
+    </changeSet>
 </databaseChangeLog>
