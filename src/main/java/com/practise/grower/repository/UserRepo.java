@@ -9,4 +9,5 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public interface UserRepo extends JpaRepository<User,Long>
 {
     User findByUsername(String username);
+    boolean existsByEmail(String email);
 }
