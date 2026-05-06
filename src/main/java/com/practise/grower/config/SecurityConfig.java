@@ -41,10 +41,10 @@ public class SecurityConfig {
         http.csrf(csrf->csrf.disable())
                 .authorizeHttpRequests(auth->
                         auth.requestMatchers("/api/v1/auth/**").permitAll()
-                                .requestMatchers("/api/v1/superadmin/**","/api/v1/manager/**","/api/v1/admin/**","/api/v1/user/**").hasRole("SUPER_ADMIN")
-                                .requestMatchers("/api/v1/admin/**","/api/v1/user/**").hasRole("ADMIN")
+                                .requestMatchers("/api/v1/superadmin/**").hasRole("SUPER_ADMIN")
+                                .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/api/v1/user/**").hasRole("USER")
-                                .requestMatchers("/api/v1/manager/**","/api/v1/user/**").hasRole("MANAGER")
+                                .requestMatchers("/api/v1/manager/**").hasRole("MANAGER")
                                 .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

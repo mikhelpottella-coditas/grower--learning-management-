@@ -13,6 +13,8 @@ import com.practise.grower.repository.UserRepo;
 import com.practise.grower.security.JwtUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,6 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
 
     private final UserRepo userRepo;
@@ -35,11 +38,18 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepo.findByUsername(username);
+        User user = userRepo.findByUsername(username);
+        if (user == null) {
+            logger.warn("User not found");
+            throw new UsernameNotFoundException("User not found");
+        }
+        return user;
     }
 
     public String register(@Valid RegisterDto registerDto) {
+        logger.info("Registering user");
         if (userRepo.existsByEmail(registerDto.email())) {
+            logger.warn("Email already exists");
             throw new CustomException(HttpStatus.BAD_REQUEST, "Email already exists");
         }
         User user = new User();
@@ -53,23 +63,35 @@ public class UserService implements UserDetailsService {
         employee.setUser(user);
         employeeRepo.save(employee);
 
+        logger.info("User registered successfully");
         return "User registered successfully";
     }
 
     public String login(@Valid LoginDto loginDto) {
+        logger.info("Logging in user");
         User user = userRepo.findByUsername(loginDto.username());
-        if(user == null) throw  new CustomException(HttpStatus.NOT_FOUND, "Invalid credentials");
+        if(user == null) {
+            logger.warn("Invalid credentials for user");
+            throw  new CustomException(HttpStatus.NOT_FOUND, "Invalid credentials");
+        }
         if(!passwordEncoder.matches(loginDto.password(), user.getPassword())){
+            logger.warn("Invalid password for user");
             throw  new CustomException(HttpStatus.NOT_FOUND, "Invalid credentials");
         }
 
+        logger.info("User logged in successfully");
         return jwtUtil.generateToken(user.getUsername(), user.getEmail());
     }
 
     public List<CourseDto> getAllEnrollmentsForUserById(Long userId) {
-        User user = userRepo.findById(userId).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "User not found with the given id"));
+        logger.info("Fetching enrollments for user ID");
+        User user = userRepo.findById(userId).orElseThrow(() -> {
+            logger.warn("User not found ");
+            return new CustomException(HttpStatus.NOT_FOUND, "User not found with the given id");
+        });
         List<Enrollment> enrollmentList = user.getEnrollments();
 
+        logger.info("Fetched enrollments for user");
         return enrollmentList.stream().map(enrollment ->
 
                 new CourseDto(enrollment.getCourse().getId(),
