@@ -1,15 +1,12 @@
 package com.practise.grower.service;
 
 import com.practise.grower.dto.Admin.*;
-import com.practise.grower.entity.Course;
-import com.practise.grower.entity.Manager;
+import com.practise.grower.dto.User.UserResponseDto;
+import com.practise.grower.entity.*;
 import com.practise.grower.entity.Module;
-import com.practise.grower.entity.User;
+import com.practise.grower.enums.Role;
 import com.practise.grower.exception.CustomException;
-import com.practise.grower.repository.CourseRepo;
-import com.practise.grower.repository.ManagerRepo;
-import com.practise.grower.repository.ModuleRepo;
-import com.practise.grower.repository.UserRepo;
+import com.practise.grower.repository.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -33,6 +30,7 @@ public class AdminService {
     private final ModuleRepo moduleRepo;
     private final ManagerRepo managerRepo;
     private final PasswordEncoder passwordEncoder;
+    private final EmployeeRepo employeeRepo;
 
     public String createCourse(CourseDto courseRequestDto) {
         logger.info("Creating course");
@@ -201,5 +199,29 @@ public class AdminService {
         managerRepo.delete(manager);
         logger.info("Manager deleted successfully");
         return "manager deleted successfully";
+    }
+
+    public List<UserResponseDto> getAllEmployees() {
+        logger.info("Fetching all employees");
+        List<User> users = userRepo.findByRole(Role.USER);
+        List<UserResponseDto> userResponseDtoList = new ArrayList<>();
+
+        users.forEach(user -> {
+            userResponseDtoList.add(new UserResponseDto(user.getId(), user.getUsername(), user.getEmail(),user.getEmployee().getWorkStatus(),new ArrayList<>(),new ArrayList<>()));
+        });
+
+
+        return userResponseDtoList;
+    }
+
+
+    public String deleteUserById(Long id) {
+        logger.info("Deleting user by ID");
+        Employee employee = employeeRepo.findById(id).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "user not found with the given id"));
+        User user = employee.getUser();
+        userRepo.delete(user);
+        employeeRepo.delete(employee);
+        logger.info("User deleted successfully");
+        return "user deleted successfully";
     }
 }
