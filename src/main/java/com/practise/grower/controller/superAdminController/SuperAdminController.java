@@ -1,4 +1,4 @@
-package com.practise.grower.controller;
+package com.practise.grower.controller.superAdminController;
 
 import com.practise.grower.dto.SuperAdmin.AdminRequestDto;
 import com.practise.grower.dto.SuperAdmin.AdminResponceDto;

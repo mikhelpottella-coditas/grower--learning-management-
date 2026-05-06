@@ -37,7 +37,7 @@ public class Course {
     @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
 
-    @OneToMany(mappedBy = "course",orphanRemoval = true)
+    @OneToMany(mappedBy = "course",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Module> modules;
 
     public void addModule(Module module) {

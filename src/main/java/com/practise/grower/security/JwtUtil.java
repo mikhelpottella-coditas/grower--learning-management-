@@ -27,7 +27,7 @@ public class JwtUtil {
                 .claims()
                 .subject(username)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis()+(1000*60*10)))
+                .expiration(new Date(System.currentTimeMillis()+(1000*60*30)))
                 .and()
                 .claim("email",email)
                 .signWith(Keys.hmacShaKeyFor(secret),Jwts.SIG.HS256)

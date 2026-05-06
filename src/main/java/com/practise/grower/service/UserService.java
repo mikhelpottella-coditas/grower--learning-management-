@@ -1,10 +1,14 @@
 package com.practise.grower.service;
 
+import com.practise.grower.dto.Admin.CourseDto;
 import com.practise.grower.dto.LoginDto;
 import com.practise.grower.dto.RegisterDto;
+import com.practise.grower.entity.Employee;
+import com.practise.grower.entity.Enrollment;
 import com.practise.grower.entity.User;
 import com.practise.grower.enums.Role;
 import com.practise.grower.exception.CustomException;
+import com.practise.grower.repository.EmployeeRepo;
 import com.practise.grower.repository.UserRepo;
 import com.practise.grower.security.JwtUtil;
 import jakarta.validation.Valid;
@@ -16,6 +20,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
@@ -23,6 +29,7 @@ public class UserService implements UserDetailsService {
 
 
     private final UserRepo userRepo;
+    private final EmployeeRepo employeeRepo;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
@@ -41,6 +48,11 @@ public class UserService implements UserDetailsService {
         user.setPassword(passwordEncoder.encode(registerDto.password()));
         user.setRole(Role.USER);
         userRepo.save(user);
+
+        Employee employee = new Employee();
+        employee.setUser(user);
+        employeeRepo.save(employee);
+
         return "User registered successfully";
     }
 
@@ -52,5 +64,20 @@ public class UserService implements UserDetailsService {
         }
 
         return jwtUtil.generateToken(user.getUsername(), user.getEmail());
+    }
+
+    public List<CourseDto> getAllEnrollmentsForUserById(Long userId) {
+        User user = userRepo.findById(userId).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "User not found with the given id"));
+        List<Enrollment> enrollmentList = user.getEnrollments();
+
+        return enrollmentList.stream().map(enrollment ->
+
+                new CourseDto(enrollment.getCourse().getId(),
+                        enrollment.getCourse().getCourseName(),
+                        enrollment.getCourse().getDescription(),
+                        enrollment.getCourse().getCourseDuration(),
+                        enrollment.getCourse().getSkillSet(),
+                        enrollment.getCourse().getPrerequisites())).toList();
+
     }
 }
