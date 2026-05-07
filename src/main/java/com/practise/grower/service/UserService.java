@@ -40,7 +40,7 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepo.findByUsername(username);
         if (user == null) {
-            logger.warn("User not found");
+            logger.warn("User not found with the name : {}",username);
             throw new UsernameNotFoundException("User not found");
         }
         return user;
@@ -84,14 +84,14 @@ public class UserService implements UserDetailsService {
     }
 
     public List<CourseDto> getAllEnrollmentsForUserById(Long userId) {
-        logger.info("Fetching enrollments for user ID");
+        logger.info("Fetching enrollments for user ID: {}",userId);
         User user = userRepo.findById(userId).orElseThrow(() -> {
             logger.warn("User not found ");
             return new CustomException(HttpStatus.NOT_FOUND, "User not found with the given id");
         });
         List<Enrollment> enrollmentList = user.getEnrollments();
 
-        logger.info("Fetched enrollments for user");
+        logger.info("Fetched enrollments for user  ");
         return enrollmentList.stream().map(enrollment ->
 
                 new CourseDto(enrollment.getCourse().getId(),

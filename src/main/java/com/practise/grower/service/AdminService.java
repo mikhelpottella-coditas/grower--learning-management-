@@ -69,13 +69,13 @@ public class AdminService {
     }
 
     public CourseDto getCourseById(Long courseId) {
-        logger.info("Fetching course by ID");
+        logger.info("Fetching course by ID: {}",courseId);
         Course course = courseRepo.findById(courseId).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "course not found with the given id"));
         return new CourseDto(course.getId(),course.getCourseName(), course.getDescription(), course.getCourseDuration(), course.getPrerequisites(), course.getSkillSet());
     }
 
     public String updateCourse(Long courseId, @Valid CourseUpdateDto courseRequestDto) {
-        logger.info("Updating course ID");
+        logger.info("Updating course ID: {}",courseId);
         Course course = courseRepo.findById(courseId).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "course not found with the given id"));
 
         if (courseRequestDto.courseName() != null) course.setCourseName(courseRequestDto.courseName());
@@ -91,15 +91,15 @@ public class AdminService {
     }
 
     public String deleteCourse(Long courseId) {
-        logger.info("Deleting course");
+        logger.info("Deleting course with the id: {}",courseId);
         Course course = courseRepo.findById(courseId).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "course not found with the given id"));
         courseRepo.delete(course);
-        logger.info("Course deleted successfully");
+        logger.info("Course deleted successfully with the id: {}",courseId);
         return "course deleted successfully";
     }
 
     public String addModulesToCourse(Long courseId, List<AddModuleDto> moduleDtoList) {
-        logger.info("Adding modules to course ");
+        logger.info("Adding modules to course with the id: {}",courseId);
         Course course = courseRepo.findById(courseId).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "course not found with the given id"));
 
 
@@ -113,13 +113,13 @@ public class AdminService {
 
         courseRepo.save(course);
 
-        logger.info("Modules added to course successfully");
+        logger.info("Modules added to course successfully with the id: {}",courseId);
         return "modules added to the course successfully";
     }
 
 
     public String updateModuleInCourse(Long courseId, Long moduleId, UpdateModuleDto moduleDto) {
-        logger.info("Updating module in course");
+        logger.info("Updating module in course with the id: {}",courseId);
         Module module = moduleRepo.findById(moduleId).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "module not found with the given id"));
 
         if(moduleDto.moduleName() != null) module.setModuleName(moduleDto.moduleName());
@@ -127,16 +127,16 @@ public class AdminService {
         if(moduleDto.resourceLink() != null) module.setResourceLink(moduleDto.resourceLink());
 
         moduleRepo.save(module);
-        logger.info("Module updated successfully");
+        logger.info("Module updated successfully wiht the id: {}",courseId);
         return "module updated successfully in the course";
     }
 
 
     public String deleteModuleFromCourse(Long courseId, Long moduleId) {
-        logger.info("Deleting module from course");
+        logger.info("Deleting module from course with the id: {}",courseId);
         Module module = moduleRepo.findById(moduleId).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "module not found with the given id"));
         moduleRepo.delete(module);
-        logger.info("Module deleted successfully");
+        logger.info("Module deleted successfully with the id: {}",courseId);
         return "module deleted successfully from the course";
     }
 
@@ -171,13 +171,13 @@ public class AdminService {
     }
 
     public ManagerResponseDto getManagerById(Long managerId) {
-        logger.info("Fetching manager by ID");
+        logger.info("Fetching manager by ID: {}",managerId);
         Manager manager = managerRepo.findById(managerId).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "manager not found with the given id"));
         return new ManagerResponseDto(manager.getId(), manager.getUser().getUsername(), manager.getUser().getEmail(), manager.getDepartment());
     }
 
     public String updateManagerById(Long managerId, ManagerRequestDto managerRequestDto) {
-        logger.info("Updating manager ID");
+        logger.info("Updating manager ID: {}",managerId);
         Manager manager = managerRepo.findById(managerId).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "manager not found with the given id"));
 
         if(managerRequestDto.name() != null) manager.getUser().setUsername(managerRequestDto.name());
@@ -187,12 +187,12 @@ public class AdminService {
 
         userRepo.save(manager.getUser());
         managerRepo.save(manager);
-        logger.info("Manager updated successfully");
+        logger.info("Manager updated successfully ID: {}",managerId);
         return "manager updated successfully";
     }
 
     public String deleteManagerById(Long managerId) {
-        logger.info("Deleting manager by ID");
+        logger.info("Deleting manager by ID: {}",managerId);
         Manager manager = managerRepo.findById(managerId).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "manager not found with the given id"));
         User user = manager.getUser();
         userRepo.delete(user);
@@ -216,12 +216,12 @@ public class AdminService {
 
 
     public String deleteUserById(Long id) {
-        logger.info("Deleting user by ID");
+        logger.info("Deleting user by ID: {}",id);
         Employee employee = employeeRepo.findById(id).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "user not found with the given id"));
         User user = employee.getUser();
         userRepo.delete(user);
         employeeRepo.delete(employee);
-        logger.info("User deleted successfully");
+        logger.info("User deleted successfully by ID: {}",id);
         return "user deleted successfully";
     }
 }
