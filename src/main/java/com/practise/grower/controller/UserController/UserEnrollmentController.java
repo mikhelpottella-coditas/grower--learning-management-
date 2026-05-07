@@ -3,6 +3,7 @@ package com.practise.grower.controller.UserController;
 import com.practise.grower.dto.Admin.CourseDto;
 import com.practise.grower.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +19,7 @@ public class UserEnrollmentController {
 
     // get all enrollments for a user by id
     @PostMapping("/{userId}")
-    public List<CourseDto> getAllEnrollmentsForUserById(Long userId) {
+    public List<CourseDto> getAllEnrollmentsForUserById(@PathVariable Long userId) {
         return userService.getAllEnrollmentsForUserById(userId);
     }
 
