@@ -6,6 +6,7 @@ import com.practise.grower.service.AdminService;
 import com.practise.grower.service.EmployeeService;
 import com.practise.grower.service.ManagerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,8 +22,9 @@ public class AdminUserController {
 
     // get all the Employees
     @GetMapping("/all")
-    public List<UserResponseDto> getAllEmployees(){
-        return adminService.getAllEmployees();
+    public ResponseEntity<List> getAllEmployees(){
+        List<UserResponseDto> responseDtos = adminService.getAllEmployees();
+        return ResponseEntity.ok(responseDtos);
     }
 
     // get user by id
